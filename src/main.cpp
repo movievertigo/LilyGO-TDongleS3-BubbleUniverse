@@ -57,7 +57,6 @@ void nextPosition()
     currentPositionIndex = (currentPositionIndex + 1) % (sizeof(sizes) / sizeof(float));
     EEPROM.write(eepromAddress_PositionIndex, currentPositionIndex);
     EEPROM.commit();
-    Serial.println(currentPositionIndex);
 }
 
 void setup()
@@ -88,7 +87,6 @@ void setup()
     FastLED.show();
 
     button.attachClick(nextPosition);
-//    button.attachLongPressStart(rotate);
 
     createSinTable();
 
@@ -97,8 +95,6 @@ void setup()
 
 void loop()
 {
-    int start = millis();
-
     button.tick();
     size = sizes[currentPositionIndex] * positionChangeFactor + size * (1-positionChangeFactor);
     xOffset = xOffsets[currentPositionIndex] * positionChangeFactor + xOffset * (1-positionChangeFactor);
@@ -106,7 +102,6 @@ void loop()
 
     leds = CRGB(-sinTable[(millis()*10)&(sinTableSize-1)]*63+64, 0, sinTable[(millis()*10)&(sinTableSize-1)]*127+128);
     FastLED.show();
-
 
     float time = millis() * speed;
 
@@ -142,11 +137,4 @@ void loop()
 
     screen.pushImageDMA(0, 0, TFT_WIDTH, TFT_HEIGHT, offscreen);
     offscreen = offscreen == offscreen1 ? offscreen2 : offscreen1;
-
-    totalTime += millis()-start;
-    ++frame;
-    if (frame <= 100)
-    {
-//        Serial.print(frame); Serial.print(" "); Serial.print(totalTime/frame); Serial.print(" "); Serial.println(totalTime);
-    }
 }
